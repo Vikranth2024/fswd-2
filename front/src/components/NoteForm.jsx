@@ -15,20 +15,38 @@ const NoteForm = ({notes, setNotes, editId, setEditId}) => {
         }
     },[editId,notes])
 
-    const handleAddorEdit = (e) => {
-        e.preventDefault()
-        if(editId && form.title.trim() && form.content.trim()){
-            setNotes(notes.map(n => n.id === editId ? {...n, ...form} : n))
-        }else{
-            if(!form.title.trim() || !form.content.trim()){
-                alert("Title and Content cannot be empty")
-                return
-            }
-            setNotes([...notes, {...form, id: Date.now()}])
-        }
-        setEditId(null)
-        setForm({title: "", content: ""})
-    }
+    const handleAddorEdit = e => {
+  e.preventDefault();
+
+  // 1️⃣ Validation (runs for both add & edit)
+  const title = form.title.trim();
+  const content = form.content.trim();
+  if (!title || !content) {
+    alert("Title and Content cannot be empty");
+    return;
+  }
+
+  // 2️⃣ Edit or Add
+  if (editId) {
+    // EDIT MODE
+    setNotes(notes.map(n =>
+      n.id === editId
+        ? { ...n, title, content }
+        : n
+    ));
+  } else {
+    // ADD MODE
+    setNotes([
+      ...notes,
+      { title, content, id: Date.now() }
+    ]);
+  }
+
+  // 3️⃣ Reset form & edit state
+  setEditId(null);
+  setForm({ title: "", content: "" });
+};
+
 
     const handleChange = (e) => {
         const {name, value} = e.target
